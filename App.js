@@ -39,9 +39,13 @@ export default function App() {
 
   const [ isSetting, setIsSetting ] = useState(false);
 
+  const onPress = () => {
+    setIsSetting(previous => !previous)
+  }
+
   return (
     <View style={styles.container}>
-      <Header />
+      <Header onPress={onPress} isSetting={isSetting} />
       <FlatList
         data={data}
         renderItem={renderItem}
