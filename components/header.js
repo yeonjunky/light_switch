@@ -12,7 +12,7 @@ export default function Header(props) {
           size={40}
           color='white'
           style={styles.rightIcon}
-          onPress={props.onPress}
+          onPress={() => props.onPress('setting')}
         /> :
         <FontAwesome 
           name='gear' 
