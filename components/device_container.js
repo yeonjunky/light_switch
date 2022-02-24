@@ -2,8 +2,8 @@ import { StyleSheet, Text, View, Switch } from 'react-native';
 import { useState } from 'react'
 
 export default function DeviceContainer(props) {
-    const [isEnabled, setIsEnabled] = useState(false);
-    const toggleSwitch = () => setIsEnabled(previousState => !previousState);
+    const [isOn, setIsOn] = useState(false);
+    const toggleSwitch = () => setIsOn(previousState => !previousState);
 
     return (
     <View style={styles.DeviceContainer}>
@@ -11,7 +11,7 @@ export default function DeviceContainer(props) {
         <Switch 
           trackColor={{ false: "#dedede", true: "#35baf6"}}
           thumbColor={"#f4f3f4"}
-          value={isEnabled}
+          value={isOn}
           onValueChange={toggleSwitch}
         />
     </View>
