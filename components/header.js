@@ -5,7 +5,12 @@ export default function Header(props) {
   return (
   <View style={styles.headerContainer}>
     <View style={styles.header}>
-      <Feather name='plus' size={40} color='white'></Feather>
+      <Feather 
+        name='plus' 
+        size={40} 
+        color='white'
+        onPress={() => props.onPress('add')}
+      />
       {props.isSetting ? 
         <FontAwesome 
           name='check'
@@ -19,7 +24,7 @@ export default function Header(props) {
           size={40} 
           color='white' 
           style={styles.rightIcon} 
-          onPress={props.onPress}
+          onPress={() => props.onPress('setting')}
         />
       }
     </View>
