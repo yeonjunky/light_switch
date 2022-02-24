@@ -1,8 +1,10 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, FlatList } from 'react-native';
+import { StyleSheet, Text, View, FlatList, Modal } from 'react-native';
 import { useState } from 'react'; 
 import DeviceContainer from './components/device_container';
 import Header from './components/header';
+import AddModal from './components/add_modal';
+import EditModal from './components/edit_modal';
 
 
 const data = [
@@ -33,19 +35,38 @@ const data = [
 ]
 
 export default function App() {
+  const [ isAdd, setIsAdd ] = useState(false);
+  const [ isSetting, setIsSetting ] = useState(false);
+  const [ modalVisible, setModalVisible ] = useState(false);
+
   const renderItem = ({ item }) => (
     <DeviceContainer text={item.title} />
   );
 
-  const [ isSetting, setIsSetting ] = useState(false);
 
-  const onPress = () => {
-    setIsSetting(previous => !previous)
+  const onPress = (type) => {
+    switch (type){
+      case "setting":
+        setIsSetting(previous => !previous);
+        break;
+
+      case "add":
+        setModalVisible(previous => !previous);
+        break;
+    }
   }
+
+  const onRequestClose = () => setModalVisible(previous => !previous)
 
   return (
     <View style={styles.container}>
-      <Header onPress={onPress} isSetting={isSetting} />
+      <Header 
+        onPress={onPress} 
+        isSetting={isSetting} 
+      />
+      <AddModal modalVisible={modalVisible} onRequestClose={onRequestClose}>
+        
+      </AddModal>
       <FlatList
         data={data}
         renderItem={renderItem}
