@@ -64,11 +64,7 @@ const styles = StyleSheet.create({
     fontSize: 25,
     textAlignVertical: "center"
   },
-  settingView: {
-
-  },
   Picker: {
-    // height: 50,
     width: 100,
   }
 });

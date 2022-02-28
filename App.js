@@ -1,48 +1,30 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, FlatList, Modal } from 'react-native';
-import { useState } from 'react'; 
+import { useState, useEffect } from 'react'; 
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import DeviceContainer from './components/device_container';
 import Header from './components/header';
 import AddModal from './components/add_modal';
 import EditModal from './components/edit_modal';
+import { storeData, getData } from './util';
 
-
-const data = [
-  {
-    id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-    title: 'First Item',
-  },
-  {
-    id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
-    title: 'Second Item',
-  },
-  {
-    id: '58694a0f-3da1-471f-bd96-145571e29d72',
-    title: 'Third Item',
-  },
-  {
-    id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28b2',
-    title: 'First Item',
-  },
-  {
-    id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f61',
-    title: 'Second Item',
-  },
-  {
-    id: '58694a0f-3da1-471f-bd96-145571e29d75',
-    title: 'Third Item',
-  },
-]
 
 export default function App() {
-  const [ isAdd, setIsAdd ] = useState(false);
+
   const [ isSetting, setIsSetting ] = useState(false);
   const [ modalVisible, setModalVisible ] = useState(false);
+  const [ isLoading, setIsLoading ] = useState(true);
+  const [ data, setData ] = useState(null);
 
-  const renderItem = ({ item }) => (
-    <DeviceContainer text={item.title} />
-  );
+  const renderItem = ({ item }) => {
+    <DeviceContainer text={item.name} isSetting={isSetting} />
+  };
 
+  useEffect(() => {
+    getData()
+      .then(res => {setData(res)});
+    setIsLoading(false);
+  }, [])
 
   const onPress = (type) => {
     switch (type){
@@ -67,11 +49,14 @@ export default function App() {
       <AddModal modalVisible={modalVisible} onRequestClose={onRequestClose}>
         
       </AddModal>
+      { isLoading ? 
+      <Text>Loading...</Text>
+      :
       <FlatList
-        data={data}
+        data={data.value}
         renderItem={renderItem}
         keyExtractor={item => item.id}
-      />
+      />}
       <StatusBar style="light" />
     </View>
   );

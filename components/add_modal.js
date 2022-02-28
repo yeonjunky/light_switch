@@ -25,7 +25,7 @@ export default function AddModal(props) {
             <TextInput 
               value={text}
               onChangeText={setText}
-              placeholder='Name'
+              placeholder='Ip'
             />
           </View>
 
