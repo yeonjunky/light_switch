@@ -6,7 +6,7 @@ import DeviceContainer from './components/device_container';
 import Header from './components/header';
 import AddModal from './components/add_modal';
 import EditModal from './components/edit_modal';
-import { storeData, getData } from './util';
+import { storeData } from './util';
 
 
 export default function App() {
@@ -14,16 +14,29 @@ export default function App() {
   const [ isSetting, setIsSetting ] = useState(false);
   const [ modalVisible, setModalVisible ] = useState(false);
   const [ isLoading, setIsLoading ] = useState(true);
-  const [ data, setData ] = useState(null);
+  const [ data, setData ] = useState({});
+  const [ lastId, setLastId ] = useState(0);
 
-  const renderItem = ({ item }) => {
+  const renderItem = ({ item }) => (
     <DeviceContainer text={item.name} isSetting={isSetting} />
-  };
+  );
+
+  const getData = () => {
+    AsyncStorage.getItem('Devices')
+      .then((res) => {
+        const json = JSON.parse(res)
+        setData(json.value);
+        setLastId(json.lastId);
+        setIsLoading(false);
+      })
+  }
+
+  const handleRefresh = () => {
+    setIsLoading(false, () => {getData()})
+  }
 
   useEffect(() => {
-    getData()
-      .then(res => {setData(res)});
-    setIsLoading(false);
+    getData();
   }, [])
 
   const onPress = (type) => {
@@ -38,7 +51,7 @@ export default function App() {
     }
   }
 
-  const onRequestClose = () => setModalVisible(previous => !previous)
+  const onRequestClose = () => setModalVisible(previous => !previous);
 
   return (
     <View style={styles.container}>
@@ -53,9 +66,10 @@ export default function App() {
       <Text>Loading...</Text>
       :
       <FlatList
-        data={data.value}
+        data={data}
         renderItem={renderItem}
         keyExtractor={item => item.id}
+        extraData={data}
       />}
       <StatusBar style="light" />
     </View>
