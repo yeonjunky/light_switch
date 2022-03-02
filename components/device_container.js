@@ -41,8 +41,20 @@ export default function DeviceContainer(props) {
         onValueChange={toggleSwitch}
         /> : 
         <View>
-          <FontAwesome name='pencil' size={40} color='black' style={{margin: 10,}}/>
-          <FontAwesome name="trash-o" size={40} color="black" style={{margin: 10,}}/>
+          <FontAwesome 
+            name='pencil' 
+            size={40} 
+            color='black' 
+            style={styles.icon}
+            onPress={() => props.onPress("modify")}
+          />
+          <FontAwesome 
+            name="trash-o" 
+            size={40} 
+            color="black" 
+            style={styles.icon}
+            onPress={() => props.onPress("delete", props.id)}
+          />
         </View>
       }
     </View>
@@ -66,5 +78,8 @@ const styles = StyleSheet.create({
   },
   Picker: {
     width: 100,
+  },
+  icon: {
+    margin: 10,
   }
 });

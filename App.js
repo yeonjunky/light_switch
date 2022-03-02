@@ -6,25 +6,32 @@ import DeviceContainer from './components/device_container';
 import Header from './components/header';
 import AddModal from './components/add_modal';
 import EditModal from './components/edit_modal';
-import { storeData } from './util';
+import { storeData, deleteElement } from './util';
 
 
 export default function App() {
 
   const [ isSetting, setIsSetting ] = useState(false);
-  const [ modalVisible, setModalVisible ] = useState(false);
+  const [ addModalVisible, setAddModalVisible ] = useState(false);
+  const [ modifyVisible, setModifyVisible ] = useState(false);
   const [ isLoading, setIsLoading ] = useState(true);
   const [ data, setData ] = useState({});
   const [ lastId, setLastId ] = useState(0);
 
   const renderItem = ({ item }) => (
-    <DeviceContainer text={item.name} isSetting={isSetting} />
+    <DeviceContainer 
+      text={item.name} 
+      id={item.id} 
+      isSetting={isSetting} 
+      onPress={onPress}
+    />
   );
 
-  const getData = () => {
-    AsyncStorage.getItem('Devices')
+  const getData = async () => {
+    await AsyncStorage.getItem('Devices')
       .then((res) => {
         const json = JSON.parse(res)
+        // console.log(json);
         setData(json.value);
         setLastId(json.lastId);
         setIsLoading(false);
@@ -35,23 +42,39 @@ export default function App() {
     setIsLoading(false, () => {getData()})
   }
 
+  const handleDelete = (id) => {
+    const arr = deleteElement(data, id);
+    console.log(arr);
+    setData(arr);
+    storeData({lastId: lastId, value: arr});
+  }
+
   useEffect(() => {
     getData();
   }, [])
 
-  const onPress = (type) => {
+  const onPress = (type, id=undefined) => {
     switch (type){
       case "setting":
         setIsSetting(previous => !previous);
         break;
 
       case "add":
-        setModalVisible(previous => !previous);
+        setAddModalVisible(previous => !previous);
+        break;
+
+      case "modify":
+        setModifyVisible(previous => !previous);
+        break;
+
+      case "delete":
+        handleDelete(id);
         break;
     }
   }
 
-  const onRequestClose = () => setModalVisible(previous => !previous);
+  const closeAdd = () => setAddModalVisible(previous => !previous);
+  const closeModify = () => setModifyVisible(previous => !previous)
 
   return (
     <View style={styles.container}>
@@ -59,9 +82,9 @@ export default function App() {
         onPress={onPress} 
         isSetting={isSetting} 
       />
-      <AddModal modalVisible={modalVisible} onRequestClose={onRequestClose}>
-        
-      </AddModal>
+      <AddModal modalVisible={addModalVisible} onRequestClose={closeAdd} />
+      <EditModal modalVisible={modifyVisible} onRequestClose={closeModify} />
+      
       { isLoading ? 
       <Text>Loading...</Text>
       :

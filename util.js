@@ -8,7 +8,6 @@ function updateStatus(arr, index) {
 
 const storeData = async (value) => {
   try {
-    console.log(value);
     await AsyncStorage.setItem('Devices', JSON.stringify(value))
       .then(() => console.log('data saved!')
     )
@@ -17,23 +16,22 @@ const storeData = async (value) => {
   }
 }
 
-const getData = async (setData) => {
-  try {
-    await AsyncStorage.getItem('Devices', (err, result) => {
-      console.log(JSON.parse(result).value);
-      return JSON.parse(result);
-    });
-  } catch (e) {
-    console.log(e);
-  }
-}
-
-function addNewVal(json, name) {
+const addNewVal = (json, name) => {
   json.lastValue++;
   let newVal = {
     id: json.lastValue,
     name: name,
   }
+}
+
+const deleteElement = (arr, id) => {
+  let newArr = [];
+  arr.filter((item) => {
+    if (item.id !== id) {
+      newArr.push(item);
+    }
+  })
+  return newArr;
 }
 
 const data = { 
@@ -54,6 +52,6 @@ const data = {
   ]
 }
 
-// storeData(data);
+// storeData(data); 
 
-export { updateStatus, storeData, getData };
+export { updateStatus, storeData, deleteElement };
