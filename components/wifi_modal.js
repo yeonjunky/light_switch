@@ -1,15 +1,14 @@
 import { StyleSheet, Text, View, Modal, TextInput, Pressable } from 'react-native';
-import { useState } from 'react'; 
-import { setWifi } from '../util';
+import { useState, useEffect } from 'react'; 
+import { setWifi, getWifi } from '../util';
 
 export default function WifiModal(props) {
   const [ ssid, setSsid ] = useState('');
   const [ pwd, setPwd ] = useState('');
 
-  const saveWifi = (ssid, pwd) => {
-      setWifi(ssid, pwd);
-
-  }
+  useEffect(() => {
+    getWifi(setSsid, setPwd)
+  }, [])
 
   return (
     <View style={styles.center}>
@@ -42,7 +41,7 @@ export default function WifiModal(props) {
               <Pressable onPress={() => {
                 setWifi(ssid, pwd)
                 props.onRequestClose()
-                }}>
+              }}>
                 <Text style={styles.text}>
                   OK
                 </Text>
