@@ -6,7 +6,7 @@ import Header from './components/header';
 import AddModal from './components/add_modal';
 import EditModal from './components/edit_modal';
 import WifiModal from './components/wifi_modal';
-import { storeData, deleteElement, getData } from './util';
+import { storeData, deleteElement, getData, makeNewVal } from './util';
 
 
 export default function App() {
@@ -29,7 +29,7 @@ export default function App() {
     />
   );
 
-  const initFunc = (res) => {
+  const initialize = (res) => {
     const json = JSON.parse(res);
     setData(json.value);
     setLastId(json.lastId);
@@ -38,6 +38,15 @@ export default function App() {
 
   const handleRefresh = () => {
     setIsLoading(false, () => {getData()})
+  }
+
+  const addData = (name) => {
+    const newVal = makeNewVal(name, lastId);
+    const newArr = data;
+    newArr.push(newVal);
+    setLastId(lastId + 1);
+    setData(newArr);
+    storeData({lastId: lastId, value: data});
   }
 
   const handleDelete = (id) => {
@@ -49,8 +58,10 @@ export default function App() {
 
   useEffect(() => {
     getData()
-      .then((res) => initFunc(res));
+      .then((res) => initialize(res));
   }, [])
+
+  // console.log(data);
 
   const onPress = (type, id=undefined) => {
     switch (type){
@@ -99,9 +110,19 @@ export default function App() {
         onPress={onPress} 
         isSetting={isSetting} 
       />
-      <AddModal modalVisible={addModalVisible} onRequestClose={() => closeModal('add')} />
-      <EditModal modalVisible={modifyVisible} onRequestClose={() => closeModal('modify')} />
-      <WifiModal modalVisible={wifiVisible} onRequestClose={() => closeModal('wifi')} />
+      <AddModal 
+        modalVisible={addModalVisible} 
+        onRequestClose={() => closeModal('add')} 
+        addData={addData}
+      />
+      <EditModal 
+        modalVisible={modifyVisible} 
+        onRequestClose={() => closeModal('modify')} 
+      />
+      <WifiModal 
+        modalVisible={wifiVisible} 
+        onRequestClose={() => closeModal('wifi')} 
+      />
       
       { isLoading ? 
       <Text>Loading...</Text>

@@ -20,14 +20,12 @@ const getData = async () => {
   return AsyncStorage.getItem('Devices');
 }
 
-const addNewVal = (json, name) => {
-  json.lastValue++;
+const makeNewVal = (name, lastId) => {
   let newVal = {
-    id: json.lastValue,
+    id: lastId + 1,
     name: name,
   }
-  json.value.push(newVal);
-  return json;
+  return newVal;
 }
 
 const deleteElement = (arr, id) => {
@@ -73,5 +71,6 @@ const data = {
   ]
 }
 
+// storeData(data);
 
-export { updateStatus, storeData, getData, deleteElement, setWifi, getWifi };
+export { updateStatus, storeData, getData, deleteElement, setWifi, getWifi, makeNewVal };

@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, FlatList, Modal, TextInput, Pressable } from 'react-native';
+import { StyleSheet, Text, View, Modal, TextInput, Pressable } from 'react-native';
 import { useState } from 'react'; 
 
 export default function AddModal(props) {
@@ -10,8 +10,8 @@ export default function AddModal(props) {
         animationType='fade'
         transparent={true}
         visible={props.modalVisible}
-        onRequestClose={() => props.onRequestClose(!props.modalVisible)}
-        >
+        onRequestClose={() => props.onRequestClose()}
+      >
         <View style={styles.modalView}>
           <View style={styles.modalInput}>
             <TextInput 
@@ -21,18 +21,22 @@ export default function AddModal(props) {
             />
           </View>
 
-          <View style={styles.modalInput}>
+          {/* <View style={styles.modalInput}>
             <TextInput 
               value={text}
               onChangeText={setText}
               placeholder='Ip'
             />
-          </View>
+          </View> */}
 
           <View style={styles.buttonView}>
 
             <View style={styles.button}>
-              <Pressable>
+              <Pressable onPress={() => {
+                props.addData(text)
+                props.onRequestClose()
+                setText('')
+              }}>
                 <Text style={styles.text}>
                   Apply
                 </Text>
@@ -40,7 +44,7 @@ export default function AddModal(props) {
             </View>
 
             <View style={styles.button}>
-              <Pressable onPress={() => props.onRequestClose(!props.modalVisible)}>
+              <Pressable onPress={() => props.onRequestClose()}>
                 <Text style={styles.text}>
                   Cancel
                 </Text>
