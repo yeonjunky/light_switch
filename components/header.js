@@ -11,22 +11,32 @@ export default function Header(props) {
         color='white'
         onPress={() => props.onPress('add')}
       />
-      {props.isSetting ? 
+
+      <View style={styles.rightIcons}>
         <FontAwesome 
-          name='check'
+          name='wifi'
           size={40}
           color='white'
           style={styles.rightIcon}
-          onPress={() => props.onPress('setting')}
-        /> :
-        <FontAwesome 
-          name='gear' 
-          size={40} 
-          color='white' 
-          style={styles.rightIcon} 
-          onPress={() => props.onPress('setting')}
+          onPress={() => props.onPress('wifi')}
         />
-      }
+        {props.isSetting ? 
+          <FontAwesome 
+            name='check'
+            size={40}
+            color='white'
+            style={styles.rightIcon}
+            onPress={() => props.onPress('setting')}
+          /> :
+          <FontAwesome 
+            name='gear' 
+            size={40} 
+            color='white' 
+            style={styles.rightIcon} 
+            onPress={() => props.onPress('setting')}
+          />
+        }
+      </View>
     </View>
   </View>
   );
@@ -53,5 +63,7 @@ const styles = StyleSheet.create({
   rightIcon: {
     marginRight: 7,
   },
-    
+  rightIcons: {
+    flexDirection: 'row',
+  },
 })
