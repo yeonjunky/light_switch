@@ -16,6 +16,10 @@ const storeData = async (value) => {
   }
 }
 
+const getData = async () => {
+  return AsyncStorage.getItem('Devices');
+}
+
 const addNewVal = (json, name) => {
   json.lastValue++;
   let newVal = {
@@ -42,10 +46,13 @@ const setWifi = async (ssid, pwd) => {
     .then(() => console.log('data saved!'))
 }
 
-const getWifi = async () => {
-  const data = await AsyncStorage.getItem('wifi')
+const getWifi = async (setSsid, setPwd) => {
+  await AsyncStorage.getItem('wifi')
     .then((res) => JSON.parse(res))
-    .then((json) => console.log(json))
+    .then((json) => {
+      setSsid(json.ssid);
+      setPwd(json.pwd);
+    })
 }
 
 const data = { 
@@ -67,4 +74,4 @@ const data = {
 }
 
 
-export { updateStatus, storeData, deleteElement, setWifi, getWifi };
+export { updateStatus, storeData, getData, deleteElement, setWifi, getWifi };

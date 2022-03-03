@@ -1,12 +1,12 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, FlatList, Modal } from 'react-native';
+import { StyleSheet, Text, View, FlatList } from 'react-native';
 import { useState, useEffect } from 'react'; 
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import DeviceContainer from './components/device_container';
 import Header from './components/header';
 import AddModal from './components/add_modal';
 import EditModal from './components/edit_modal';
-import { storeData, deleteElement } from './util';
+import WifiModal from './components/wifi_modal';
+import { storeData, deleteElement, getData } from './util';
 
 
 export default function App() {
@@ -14,9 +14,11 @@ export default function App() {
   const [ isSetting, setIsSetting ] = useState(false);
   const [ addModalVisible, setAddModalVisible ] = useState(false);
   const [ modifyVisible, setModifyVisible ] = useState(false);
+  const [ wifiVisible, setWifiVisible ] = useState(false);
   const [ isLoading, setIsLoading ] = useState(true);
   const [ data, setData ] = useState({});
   const [ lastId, setLastId ] = useState(0);
+
 
   const renderItem = ({ item }) => (
     <DeviceContainer 
@@ -27,15 +29,11 @@ export default function App() {
     />
   );
 
-  const getData = async () => {
-    await AsyncStorage.getItem('Devices')
-      .then((res) => {
-        const json = JSON.parse(res)
-        // console.log(json);
-        setData(json.value);
-        setLastId(json.lastId);
-        setIsLoading(false);
-      })
+  const initFunc = (res) => {
+    const json = JSON.parse(res);
+    setData(json.value);
+    setLastId(json.lastId);
+    setIsLoading(false);
   }
 
   const handleRefresh = () => {
@@ -50,7 +48,8 @@ export default function App() {
   }
 
   useEffect(() => {
-    getData();
+    getData()
+      .then((res) => initFunc(res));
   }, [])
 
   const onPress = (type, id=undefined) => {
@@ -66,15 +65,33 @@ export default function App() {
       case "modify":
         setModifyVisible(previous => !previous);
         break;
-
+        
+      case "wifi":
+        setWifiVisible(previous => !previous);
+        break;
+      
       case "delete":
         handleDelete(id);
         break;
+
     }
   }
 
-  const closeAdd = () => setAddModalVisible(previous => !previous);
-  const closeModify = () => setModifyVisible(previous => !previous)
+  const closeModal = (type) => {
+    switch (type) {
+      case "add":
+        setAddModalVisible(false);
+        break;
+
+      case "modify":
+        setModifyVisible(false);
+        break
+
+      case "wifi":
+        setWifiVisible(false);
+        break;
+    }
+  }
 
   return (
     <View style={styles.container}>
@@ -82,8 +99,9 @@ export default function App() {
         onPress={onPress} 
         isSetting={isSetting} 
       />
-      <AddModal modalVisible={addModalVisible} onRequestClose={closeAdd} />
-      <EditModal modalVisible={modifyVisible} onRequestClose={closeModify} />
+      <AddModal modalVisible={addModalVisible} onRequestClose={() => closeModal('add')} />
+      <EditModal modalVisible={modifyVisible} onRequestClose={() => closeModal('modify')} />
+      <WifiModal modalVisible={wifiVisible} onRequestClose={() => closeModal('wifi')} />
       
       { isLoading ? 
       <Text>Loading...</Text>
