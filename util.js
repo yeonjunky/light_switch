@@ -6,6 +6,15 @@ function updateStatus(arr, index) {
   return arr;
 }
 
+const initData = async () => {
+  const keys = ['Devices', 'wifi'];
+  const values = [{lastId: 0, value: []}, {ssid: '', pwd: ''}]
+  await AsyncStorage.multiRemove(keys)
+    .then(() => {
+      AsyncStorage.setItem([keys[0], values[0]], [keys[1], keys[1]]);
+    })
+}
+
 const storeData = async (value) => {
   try {
     await AsyncStorage.setItem('Devices', JSON.stringify(value))
@@ -73,4 +82,4 @@ const data = {
 
 // storeData(data);
 
-export { updateStatus, storeData, getData, deleteElement, setWifi, getWifi, makeNewVal };
+export { updateStatus, initData, storeData, getData, deleteElement, setWifi, getWifi, makeNewVal };
