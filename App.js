@@ -6,7 +6,7 @@ import Header from './components/header';
 import AddModal from './components/add_modal';
 import EditModal from './components/edit_modal';
 import WifiModal from './components/wifi_modal';
-import { storeData, deleteElement, getData, makeNewVal } from './util';
+import { storeData, deleteElement, getData, makeNewVal, editData } from './util';
 
 
 export default function App() {
@@ -18,6 +18,7 @@ export default function App() {
   const [ isLoading, setIsLoading ] = useState(true);
   const [ data, setData ] = useState({});
   const [ lastId, setLastId ] = useState(0);
+  const [ editVal, setEditVal ] = useState([]);
 
 
   const renderItem = ({ item }) => (
@@ -26,6 +27,7 @@ export default function App() {
       id={item.id} 
       isSetting={isSetting} 
       onPress={onPress}
+      passEditVal={passEditVal}
     />
   );
 
@@ -34,10 +36,6 @@ export default function App() {
     setData(json.value);
     setLastId(json.lastId);
     setIsLoading(false);
-  }
-
-  const handleRefresh = () => {
-    setIsLoading(false, () => {getData()})
   }
 
   const addData = (name) => {
@@ -49,11 +47,21 @@ export default function App() {
     storeData({lastId: lastId, value: data});
   }
 
+  const handleEdit = (id, text) => {
+    let json = editData(data, id, text, lastId);
+    console.log(json);
+    setData(json);
+  }
+
   const handleDelete = (id) => {
     const arr = deleteElement(data, id);
     console.log(arr);
     setData(arr);
     storeData({lastId: lastId, value: arr});
+  }
+
+  const passEditVal = (arr) => {
+    setEditVal(arr);
   }
 
   useEffect(() => {
@@ -70,15 +78,15 @@ export default function App() {
         break;
 
       case "add":
-        setAddModalVisible(previous => !previous);
+        setAddModalVisible(true);
         break;
 
       case "modify":
-        setModifyVisible(previous => !previous);
+        setModifyVisible(true);
         break;
         
       case "wifi":
-        setWifiVisible(previous => !previous);
+        setWifiVisible(true);
         break;
       
       case "delete":
@@ -118,6 +126,9 @@ export default function App() {
       <EditModal 
         modalVisible={modifyVisible} 
         onRequestClose={() => closeModal('modify')} 
+        editVal={editVal}
+        passEditVal={passEditVal}
+        handleEdit={handleEdit}
       />
       <WifiModal 
         modalVisible={wifiVisible} 

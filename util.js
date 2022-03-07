@@ -25,6 +25,24 @@ const storeData = async (value) => {
   }
 }
 
+const editData = (value, id, text, lastId) => {
+  let newValue = []
+  try {
+    value.filter((item) => {
+      if(item.id === id) {
+        item.name = text;
+      }
+      newValue.push(item);
+    })
+    console.log(newValue);
+    storeData({lastId: lastId, value: newValue});
+    return newValue;
+
+  } catch (e) {
+    console.log(e);
+  }
+}
+
 const getData = async () => {
   return AsyncStorage.getItem('Devices');
 }
@@ -82,4 +100,14 @@ const data = {
 
 // storeData(data);
 
-export { updateStatus, initData, storeData, getData, deleteElement, setWifi, getWifi, makeNewVal };
+export { 
+  updateStatus, 
+  initData, 
+  storeData, 
+  getData, 
+  deleteElement, 
+  setWifi, 
+  getWifi, 
+  makeNewVal,
+  editData,
+ };

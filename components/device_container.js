@@ -5,9 +5,9 @@ import { Picker } from '@react-native-picker/picker';
 import { updateStatus } from '../util';
 
 export default function DeviceContainer(props) {
-  const [isOn, setIsOn] = useState(false);
+  const [ isOn, setIsOn ] = useState(false);
   const [ channel, setChannel ] = useState("1");
-  const [ status, setStatus ] = useState([false, true, false]);
+  const [ status, setStatus ] = useState([false, false, false]);
 
   useEffect(() => {
     setIsOn(status[parseInt(channel) - 1]);
@@ -46,7 +46,10 @@ export default function DeviceContainer(props) {
             size={40} 
             color='black' 
             style={styles.icon}
-            onPress={() => props.onPress("modify")}
+            onPress={() => {
+              props.onPress("modify");
+              props.passEditVal([props.id, props.text]);
+            }}
           />
           <FontAwesome 
             name="trash-o" 
