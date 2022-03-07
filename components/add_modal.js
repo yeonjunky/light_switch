@@ -21,14 +21,6 @@ export default function AddModal(props) {
             />
           </View>
 
-          {/* <View style={styles.modalInput}>
-            <TextInput 
-              value={text}
-              onChangeText={setText}
-              placeholder='Ip'
-            />
-          </View> */}
-
           <View style={styles.buttonView}>
 
             <View style={styles.button}>
@@ -38,7 +30,7 @@ export default function AddModal(props) {
                 setText('')
               }}>
                 <Text style={styles.text}>
-                  Apply
+                  Add
                 </Text>
               </Pressable>
             </View>
