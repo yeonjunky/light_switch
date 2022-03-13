@@ -1,12 +1,21 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, FlatList } from 'react-native';
+import { StyleSheet, Text, View, FlatList,  } from 'react-native';
 import { useState, useEffect } from 'react'; 
+import { PermissionsAndroid, Platform } from 'react-native-web';
+import { BleManager } from 'react-native-ble-plx';
 import DeviceContainer from './components/device_container';
 import Header from './components/header';
 import AddModal from './components/add_modal';
 import EditModal from './components/edit_modal';
 import WifiModal from './components/wifi_modal';
-import { storeData, deleteElement, getData, makeNewVal, editData } from './util';
+import { 
+  storeData,
+  deleteElement,
+  getData,
+  makeNewVal,
+  editData,
+  checkPermission,
+} from './util';
 
 
 export default function App() {
@@ -19,6 +28,8 @@ export default function App() {
   const [ data, setData ] = useState({});
   const [ lastId, setLastId ] = useState(0);
   const [ editVal, setEditVal ] = useState([]);
+
+  const manager = new BleManager();
 
 
   const renderItem = ({ item }) => (
@@ -67,9 +78,9 @@ export default function App() {
   useEffect(() => {
     getData()
       .then((res) => initialize(res));
+    checkPermission(Platform, PermissionsAndroid);
   }, [])
 
-  // console.log(data);
 
   const onPress = (type, id=undefined) => {
     switch (type){

@@ -80,6 +80,24 @@ const getWifi = async (setSsid, setPwd) => {
     })
 }
 
+const checkPermission = (platform, permissionsAndroid) => {
+  if(platform.OS === 'android' && platform.Version >= 23){
+    permissionsAndroid.check(permissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION)
+      .then((res) => {
+
+      })
+  } else {
+    permissionsAndroid.requestPermission(permissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION)
+      .then((result) => {
+        if (result) {
+            console.log("User accept");
+        } else {
+            console.log("User refuse");
+        }
+      });
+  }
+}
+
 const data = { 
   lastId: 3,
   value: [
@@ -98,7 +116,6 @@ const data = {
   ]
 }
 
-// storeData(data);
 
 export { 
   updateStatus, 
@@ -110,4 +127,5 @@ export {
   getWifi, 
   makeNewVal,
   editData,
+  checkPermission,
  };
