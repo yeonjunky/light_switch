@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { PermissionsAndroid } from 'react-native';
 
 
 function updateStatus(arr, index) {
@@ -7,11 +8,11 @@ function updateStatus(arr, index) {
 }
 
 const initData = async () => {
-  const keys = ['Devices', 'wifi'];
-  const values = [{lastId: 0, value: []}, {ssid: '', pwd: ''}]
-  await AsyncStorage.multiRemove(keys)
+  const firstPair = ['Devices', JSON.stringify({lastId: 0, value: []})];
+  const secondPair = ['wifi', JSON.stringify({ssid: '', pwd: ''})]
+  await AsyncStorage.multiRemove(['Devices', 'wifi'])
     .then(() => {
-      AsyncStorage.setItem([keys[0], values[0]], [keys[1], keys[1]]);
+      AsyncStorage.multiSet([firstPair, secondPair]);
     })
 }
 
@@ -75,47 +76,41 @@ const getWifi = async (setSsid, setPwd) => {
   await AsyncStorage.getItem('wifi')
     .then((res) => JSON.parse(res))
     .then((json) => {
-      setSsid(json.ssid);
-      setPwd(json.pwd);
+      if(json === null){
+
+      } else {
+        setSsid(json.ssid);
+        setPwd(json.pwd);
+      }
     })
 }
 
-const checkPermission = (platform, permissionsAndroid) => {
-  if(platform.OS === 'android' && platform.Version >= 23){
-    permissionsAndroid.check(permissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION)
-      .then((res) => {
-
-      })
-  } else {
-    permissionsAndroid.requestPermission(permissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION)
-      .then((result) => {
-        if (result) {
-            console.log("User accept");
-        } else {
-            console.log("User refuse");
+const checkPermission = async () => {
+  const chckLocationPermission = PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
+    if (chckLocationPermission === PermissionsAndroid.RESULTS.GRANTED) {
+        alert("You've access for the location");
+    } else {
+        try {
+            const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+                {
+                  'title': 'Cool Location App required Location permission',
+                  'message': 'We required Location permission in order to get device location ' +
+                      'Please grant us.',
+                  buttonNeutral: "Ask Me Later",
+                  buttonNegative: "Cancel",
+                  buttonPositive: "OK"
+                }
+            )
+            if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+                alert("You've access for the location");
+            } else {
+                alert("You don't have access for the location");
+            }
+        } catch (err) {
+            alert(err)
         }
-      });
-  }
+    }
 }
-
-const data = { 
-  lastId: 3,
-  value: [
-    {
-      id: '1',
-      name: 'First Item',
-    },
-    {
-      id: '2',
-      name: 'Second Item',
-    },
-    {
-      id: '3',
-      name: 'Third Item',
-    },
-  ]
-}
-
 
 export { 
   updateStatus, 
@@ -127,5 +122,5 @@ export {
   getWifi, 
   makeNewVal,
   editData,
-  checkPermission,
+  // checkPermission,
  };

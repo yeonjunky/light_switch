@@ -34,7 +34,6 @@ export default function EditModal(props) {
 
             <View style={styles.button}>
               <Pressable onPress={() => {
-                // props.passEditVal([id, text])
                 props.handleEdit(id, text)
                 props.onRequestClose()
               }}>

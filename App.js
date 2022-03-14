@@ -1,8 +1,9 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, FlatList,  } from 'react-native';
 import { useState, useEffect } from 'react'; 
-import { PermissionsAndroid, Platform } from 'react-native-web';
-import { BleManager } from 'react-native-ble-plx';
+import { stringToBytes } from 'convert-string';
+import { Buffer } from 'buffer';
+import BleManager from 'react-native-ble-manager';
 import DeviceContainer from './components/device_container';
 import Header from './components/header';
 import AddModal from './components/add_modal';
@@ -14,7 +15,7 @@ import {
   getData,
   makeNewVal,
   editData,
-  checkPermission,
+  initData,
 } from './util';
 
 
@@ -29,7 +30,9 @@ export default function App() {
   const [ lastId, setLastId ] = useState(0);
   const [ editVal, setEditVal ] = useState([]);
 
-  const manager = new BleManager();
+  BleManager.start().then(() => {
+    console.log("Module initialized");
+  });
 
 
   const renderItem = ({ item }) => (
@@ -42,14 +45,20 @@ export default function App() {
     />
   );
 
-  const initialize = (res) => {
+  const runApp = (res) => {
     const json = JSON.parse(res);
-    setData(json.value);
-    setLastId(json.lastId);
-    setIsLoading(false);
+    if(json === null){
+      initData();
+    } else {
+      setData(json.value);
+      setLastId(json.lastId);
+      setIsLoading(false);
+    }
   }
 
   const addData = (name) => {
+    BleManager.scan(["11da82f8-d97e-4566-a494-4f6b88c8b271"], 5);
+
     const newVal = makeNewVal(name, lastId);
     const newArr = data;
     newArr.push(newVal);
@@ -77,8 +86,7 @@ export default function App() {
 
   useEffect(() => {
     getData()
-      .then((res) => initialize(res));
-    checkPermission(Platform, PermissionsAndroid);
+      .then((res) => runApp(res));
   }, [])
 
 
