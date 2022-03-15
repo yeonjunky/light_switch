@@ -31,7 +31,7 @@ export default function App() {
   const [ editVal, setEditVal ] = useState([]);
 
   BleManager.start().then(() => {
-    console.log("Module initialized");
+    console.log("BLE Module initialized");
   });
 
 
@@ -52,12 +52,15 @@ export default function App() {
     } else {
       setData(json.value);
       setLastId(json.lastId);
-      setIsLoading(false);
     }
+    setIsLoading(false);
   }
 
   const addData = (name) => {
-    BleManager.scan(["11da82f8-d97e-4566-a494-4f6b88c8b271"], 5);
+    BleManager.scan(["11da82f8-d97e-4566-a494-4f6b88c8b271"], 5, false)
+      .then(() => {
+        
+      });
 
     const newVal = makeNewVal(name, lastId);
     const newArr = data;

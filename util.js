@@ -1,7 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { PermissionsAndroid } from 'react-native';
 
-
 function updateStatus(arr, index) {
   arr[index] = !arr[index];
   return arr;
@@ -112,6 +111,8 @@ const checkPermission = async () => {
     }
 }
 
+
+
 export { 
   updateStatus, 
   initData, 
@@ -122,5 +123,4 @@ export {
   getWifi, 
   makeNewVal,
   editData,
-  // checkPermission,
  };
