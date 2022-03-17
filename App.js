@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, FlatList,  } from 'react-native';
+import { StyleSheet, Text, View, FlatList, NativeModules, NativeEventEmitter, } from 'react-native';
 import { useState, useEffect } from 'react'; 
 import { stringToBytes } from 'convert-string';
 import { Buffer } from 'buffer';
@@ -19,6 +19,9 @@ import {
 } from './util';
 
 
+const BleManagerModule = NativeModules.BleManager;
+const bleManagerEmitter = new NativeEventEmitter(BleManagerModule);
+
 export default function App() {
 
   const [ isSetting, setIsSetting ] = useState(false);
@@ -29,10 +32,6 @@ export default function App() {
   const [ data, setData ] = useState({});
   const [ lastId, setLastId ] = useState(0);
   const [ editVal, setEditVal ] = useState([]);
-
-  BleManager.start().then(() => {
-    console.log("BLE Module initialized");
-  });
 
 
   const renderItem = ({ item }) => (
@@ -59,7 +58,7 @@ export default function App() {
   const addData = (name) => {
     BleManager.scan(["11da82f8-d97e-4566-a494-4f6b88c8b271"], 5, false)
       .then(() => {
-        
+        console.log("Scanning started");
       });
 
     const newVal = makeNewVal(name, lastId);
@@ -87,7 +86,17 @@ export default function App() {
     setEditVal(arr);
   }
 
+  const BleEventlistener = () => {
+    bleManagerEmitter.addListener("BleManagerStopScan", () => {
+      console.log("Scanning stopped");
+    });
+  }
+
   useEffect(() => {
+    BleManager.start().then(() => {
+      console.log("BLE Module initialized");
+    });
+    BleEventlistener();
     getData()
       .then((res) => runApp(res));
   }, [])
